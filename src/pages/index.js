@@ -1,18 +1,39 @@
-import React from "react"
-import { Link } from "gatsby"
+import React from 'react'
+import { graphql } from 'gatsby'
+import Layout from '../component/layout/'
+import SEO from '../component/seo/'
+import Article from '../component/article'
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
-import Article from '../components/article'
-
-const IndexPage = () => (
+const IndexPage = props => (
   <Layout>
     <div className="page">
-      <SEO title="Home - blog" keywords={ ['blog', 'gatsby'] } />
-      <Article />
+      <SEO title="My blog" keywords={[`blog`, `gatsby`, `prismic`]} />
+      {props.data.articles.edges.map(article => (
+        <Article slug={article.node.slugs[0]} data={article.node.data} />
+      ))}
     </div>
   </Layout>
 )
 
 export default IndexPage
+
+export const IndexQuery = graphql`
+  query Articles {
+    articles: allPrismicArticle {
+      edges {
+        node {
+          slugs
+          data {
+            title {
+              text
+            }
+            image {
+              url
+              alt
+            }
+          }
+        }
+      }
+    }
+  }
+`
